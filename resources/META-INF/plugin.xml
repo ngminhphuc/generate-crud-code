@@ -1,0 +1,46 @@
+<idea-plugin>
+    <id>0536</id>
+    <name>Generate CURD code</name>
+    <version>3.0.1</version>
+    <vendor email="guoguang0536@gmail.com" url="https://madaoo.com">GuoGuang</vendor>
+
+    <description>
+        <![CDATA[
+        <p>基于实体类生成CRUD代码，</p>
+    <p>
+        请在使用Entity注解定义的类上点击右键生成，将生成如下模块 :
+        <ul><li>具有Swagger DOC API的Controller REST API</li>
+        <li>DAO(PagingAndSortingRepository)</li>
+        <li>DTO</li>
+        <li>Service (with page query)</li>
+        <li>Mapper mapstruct</li>
+        <li>Mockito Juint5 Unit Test</li>
+        </ul>
+    </p>
+
+</p>]]>
+    </description>
+
+    <change-notes><![CDATA[
+      3.0.1
+    ]]>
+    </change-notes>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <depends>com.intellij.modules.java</depends>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <action id="codeGenerator" class="com.madao.plugin.GeneratorAction" text="生成代码">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+        </action>
+    </actions>
+
+</idea-plugin>
