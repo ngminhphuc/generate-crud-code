@@ -95,20 +95,23 @@ public class GeneratorAction extends AnAction {
     }
 
     private void createControllerUnitTest(EntityClasses entityClasses) {
-        String testName = entityClasses.getControllerClass().getName() + "ImplTest";
+        String testName = entityClasses.getControllerClass().getName() + "Test";
         String content = ContentClass.getTestContent(entityClasses);
         ClassCreator.of(this.testProject).init(testName, content)
-                .importClass(entityClasses.getControllerClass().getName() + "Impl")
+                .importClass(entityClasses.getControllerClass().getName())
                 .importClass(entityClasses.getDtoClass())
                 .importClass(entityClasses.getServiceClass())
                 .importClass(entityClasses.getMapperClass())
                 .importClass(entityClasses.getEntityClass())
-                .importClass("ReferenceMapper").importClass("org.junit.Before")
+                .importClass("EntityMapper").importClass("org.junit.Before")
                 .importClass("java.util.Arrays").importClass("org.hamcrest.Matchers")
                 .importClass("com.google.gson.Gson").importClass("org.junit.Test")
                 .importClass("org.junit.runner.RunWith").importClass("org.mockito.InjectMocks")
                 .importClass("org.mockito.Mock").importClass("org.mockito.Mockito")
                 .importClass("org.mockito.ArgumentMatchers")
+                .importClass("java.util.List")
+                .importClass("ResourceNotFoundException")
+                .importClass("BeanUtil")
                 .importClass("org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc")
                 .importClass("org.springframework.boot.test.context.SpringBootTest")
                 .importClass("org.springframework.http.MediaType")
@@ -116,8 +119,8 @@ public class GeneratorAction extends AnAction {
                 .importClass("org.springframework.test.web.servlet.MockMvc")
                 .importClass("org.springframework.test.web.servlet.setup.MockMvcBuilders")
                 .importClass("org.springframework.test.context.junit4.SpringRunner")
-                .importClass("org.springframework.test.web.servlet.MockMvc").
-                importClass("org.springframework.test.web.servlet.request.MockMvcRequestBuilders")
+                .importClass("org.springframework.test.web.servlet.MockMvc")
+		        .importClass("org.springframework.test.web.servlet.request.MockMvcRequestBuilders")
                 .importClass("org.springframework.test.web.servlet.result.MockMvcResultHandlers")
                 .importClass("org.springframework.test.web.servlet.result.MockMvcResultMatchers")
                 .importClass("org.springframework.test.web.servlet.setup.MockMvcBuilders")
@@ -128,6 +131,7 @@ public class GeneratorAction extends AnAction {
                 .importClass("org.hamcrest.core.Is").
                 importClass("org.mockito.ArgumentMatchers")
                 .importClass("org.mockito.Mockito")
+                .importClass(entityClasses.getEntityClassName()+"Builder")
                 .importClass("CustomUtils").addTo(this.controllerTestDirectory);
     }
 
@@ -308,8 +312,8 @@ public class GeneratorAction extends AnAction {
                 .append("this." + entityFieldName + "Service = " + entityFieldName + "Service;")
                 .append("this." + entityFieldName + "Mapper = " + entityFieldName + "Mapper;")
                 .append("}")
-                .append("@PostMapping @ResponseStatus(HttpStatus.CREATED)")
-                .append("public " + entityClasses.getDtoClass().getName() + " save(@RequestBody  ")
+                .append("@PostMapping ")
+                .append("public " + entityClasses.getDtoClass().getName() + " save(@RequestBody @Validated ")
                 .append(entityClasses.getDtoClass().getName()).append(" ").append(entityFieldName + "DTO").append(") { ")
                 .append(entityName + " " + entityFieldName + " = " + entityFieldName + "Mapper.toEntity(" + entityFieldName + "DTO);")
                 .append("return " + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.save(" + entityFieldName + ")); }")
@@ -329,7 +333,7 @@ public class GeneratorAction extends AnAction {
                 .append("List<" + entityName + "DTO> dtoList =" + entityFieldName + "Page\n                .stream()\n                .map(" + entityFieldName + "Mapper::toDto).collect(Collectors.toList());")
                 .append("return new PageImpl<>(dtoList, pageable, " + entityFieldName + "Page.getTotalElements()) ;}")
                 .append("@PutMapping(\"/{id}\") public ").append(entityClasses.getDtoClass().getName())
-                .append(" update(@RequestBody " + entityClasses.getDtoClass().getName() + " " + entityFieldName + "DTO, @PathVariable(\"id\") " + entityClasses.getIdField().getType().getPresentableText() + " id) { ")
+                .append(" update(@RequestBody @Validated " + entityClasses.getDtoClass().getName() + " " + entityFieldName + "DTO, @PathVariable(\"id\") " + entityClasses.getIdField().getType().getPresentableText() + " id) { ")
                 .append(entityName + " " + entityFieldName + " =" + entityFieldName + "Mapper.toEntity(" + entityFieldName + "DTO);")
                 .append("return " + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.update(" + entityFieldName + ", id));}")
                 .append("}");
@@ -356,6 +360,7 @@ public class GeneratorAction extends AnAction {
                 .and(entityClasses::setControllerClass);
         WriteCommandAction.runWriteCommandAction(this.testProject, () -> {
             this.createUtilsClass(entityClasses);
+            this.createBuilderClass(entityClasses);
         });
 }
 
@@ -363,6 +368,14 @@ public class GeneratorAction extends AnAction {
         String utils = "CustomUtils";
         String content = ContentClass.getUtilTest();
         ClassCreator.of(this.testProject).init(utils, content).importClass("com.fasterxml.jackson.databind.ObjectMapper").addTo(this.controllerTestDirectory);
+        this.createControllerUnitTest(entityClasses);
+    }
+    private void createBuilderClass(EntityClasses entityClasses) {
+        String utils = entityClasses.getEntityClassName()+"Builder";
+        String content = ContentClass.getBuilderClass();
+        ClassCreator.of(this.testProject).init(utils, content)
+		        .importClass("com.fasterxml.jackson.databind.ObjectMapper")
+		        .addTo(this.controllerTestDirectory);
         this.createControllerUnitTest(entityClasses);
     }
 
