@@ -313,29 +313,29 @@ public class GeneratorAction extends AnAction {
                 .append("this." + entityFieldName + "Mapper = " + entityFieldName + "Mapper;")
                 .append("}")
                 .append("@PostMapping ")
-                .append("public " + entityClasses.getDtoClass().getName() + " save(@RequestBody @Validated ")
+                .append("public Result<Void> save(@RequestBody @Validated ")
                 .append(entityClasses.getDtoClass().getName()).append(" ").append(entityFieldName + "DTO").append(") { ")
                 .append(entityName + " " + entityFieldName + " = " + entityFieldName + "Mapper.toEntity(" + entityFieldName + "DTO);")
-                .append("return " + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.save(" + entityFieldName + ")); }")
-                .append("@GetMapping(\"/{id}\") public " + entityClasses.getDtoClass().getName() + " findById(@PathVariable(\"id\") ")
+                .append("return Result.ok(" + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.save(" + entityFieldName + "))); }")
+                .append("@GetMapping(\"/{id}\") public Result<" + entityClasses.getDtoClass().getName() + "> findById(@PathVariable(\"id\") ")
                 .append(entityClasses.getIdField().getType().getPresentableText() + " id) {")
                 .append(entityName + " " + entityFieldName + " = " + entityFieldName + "Service.findById(id).orElse(null);")
-                .append("return " + entityFieldName + "Mapper.toDto(" + entityFieldName + ");}")
-                .append("@DeleteMapping(\"/{id}\") public void delete(@PathVariable(\"id\") ")
+                .append("return Result.ok(" + entityFieldName + "Mapper.toDto(" + entityFieldName + "));}")
+                .append("@DeleteMapping(\"/{id}\") public Result<Void> delete(@PathVariable(\"id\") ")
                 .append(entityClasses.getIdField().getType().getPresentableText() + " id) {").append(entityFieldName)
                 .append("Service.deleteById(id);}")
                 .append("@GetMapping public List<")
-                .append(entityClasses.getDtoClass().getName()).append("> list() { return ")
-                .append(entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.findAll()); }")
-                .append("@GetMapping(\"/page-query\") public Page<")
-                .append(entityClasses.getDtoClass().getName()).append("> pageQuery(Pageable pageable) {  ")
+                .append(entityClasses.getDtoClass().getName()).append("> list() { return Result.ok(")
+                .append(entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.findAll())); }")
+                .append("@GetMapping(\"/page-query\") public Result<Page<")
+                .append(entityClasses.getDtoClass().getName()).append(">> pageQuery(@PageableDefault(sort = \"createAt\", direction = DESC) Pageable pageable) {  ")
                 .append("Page<" + entityName + "> " + entityFieldName + "Page = " + entityFieldName + "Service.findAll(pageable);")
                 .append("List<" + entityName + "DTO> dtoList =" + entityFieldName + "Page\n                .stream()\n                .map(" + entityFieldName + "Mapper::toDto).collect(Collectors.toList());")
-                .append("return new PageImpl<>(dtoList, pageable, " + entityFieldName + "Page.getTotalElements()) ;}")
-                .append("@PutMapping(\"/{id}\") public ").append(entityClasses.getDtoClass().getName())
+                .append("return Result.ok(new PageImpl<>(dtoList, pageable, " + entityFieldName + "Page.getTotalElements())) ;}")
+                .append("@PutMapping(\"/{id}\") public Result<Void>")
                 .append(" update(@RequestBody @Validated " + entityClasses.getDtoClass().getName() + " " + entityFieldName + "DTO, @PathVariable(\"id\") " + entityClasses.getIdField().getType().getPresentableText() + " id) { ")
                 .append(entityName + " " + entityFieldName + " =" + entityFieldName + "Mapper.toEntity(" + entityFieldName + "DTO);")
-                .append("return " + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.update(" + entityFieldName + ", id));}")
+                .append("return Result.ok(" + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.update(" + entityFieldName + ", id)));}")
                 .append("}");
         ClassCreator.of(this.project).init(entityClasses.getEntityName() + suffix, content.toString())
                 .importClass("org.springframework.http.HttpStatus")
@@ -345,12 +345,14 @@ public class GeneratorAction extends AnAction {
                 .importClass("org.springframework.web.bind.annotation.RequestBody")
                 .importClass("PathVariable")
                 .importClass("RequestParam")
+                .importClass("Result")
                 .importClass("org.springframework.data.domain.Pageable")
                 .importClass("org.springframework.data.domain.PageImpl")
                 .importClass("org.springframework.data.domain.Page")
                 .importClass("java.util.Optional")
                 .importClass("java.util.List")
                 .importClass("java.util.stream.Collectors")
+                .importClass("org.springframework.validation.annotation.Validated")
                 .importClass(entityClasses.getControllerClass())
                 .importClass(entityClasses.getEntityClass())
                 .importClass(entityClasses.getDtoClass())
@@ -395,7 +397,14 @@ public class GeneratorAction extends AnAction {
 
         PsiDirectory repositoryDirectory = null == this.containerDirectory.getParent() ? this.containerDirectory : this.psiUtils.getOrCreateSubDirectory(this.containerDirectory.getParent(), "repository");
         String repositoryName = entityName.replace("Entity", "").concat("Repository");
-        ClassCreator.of(this.project).init(repositoryName, "@Repository public interface " + repositoryName + " extends PagingAndSortingRepository<" + entityClasses.getEntityClassName() + ", " + entityClasses.getIdType() + "> {}").importClass(entityClasses.getEntityClass()).importClass("PagingAndSortingRepository").importClass("org.springframework.stereotype.Repository").addTo(repositoryDirectory).and((repositoryClass) -> {
+        ClassCreator.of(this.project).init(repositoryName, "@Repository public interface "
+		        + repositoryName + " extends JpaRepository<" + entityClasses.getEntityClassName() + ", " + entityClasses.getIdType() + ">"
+		        + ", JpaSpecificationExecutor<" + entityClasses.getEntityClassName() +">{}")
+		        .importClass(entityClasses.getEntityClass())
+		        .importClass("PagingAndSortingRepository")
+		        .importClass("org.springframework.stereotype.Repository")
+		        .addTo(repositoryDirectory)
+		        .and((repositoryClass) -> {
             this.createClasses(entityClasses.setRepositoryClass(repositoryClass));
             this.createService(entityClasses);
         });

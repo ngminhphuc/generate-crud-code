@@ -1,20 +1,21 @@
 <idea-plugin>
     <id>0536</id>
-    <name>Generate CURD code</name>
+    <name>generateCrudCode</name>
     <version>3.0.1</version>
     <vendor email="guoguang0536@gmail.com" url="https://madaoo.com">GuoGuang</vendor>
 
     <description>
         <![CDATA[
-        <p>基于实体类生成CRUD代码，</p>
+        <p>generate crud code based on entity classes</p>
     <p>
-        请在使用Entity注解定义的类上点击右键生成，将生成如下模块 :
-        <ul><li>具有Swagger DOC API的Controller REST API</li>
-        <li>DAO(PagingAndSortingRepository)</li>
+        Please right-click to generate the class defined with the Entity annotation,
+         and the following module will be generated :
+        <ul><li>Controller REST API with Swagger DOC API</li>
+        <li>DAO(JpaRepository)</li>
         <li>DTO</li>
         <li>Service (with page query)</li>
         <li>Mapper mapstruct</li>
-        <li>Mockito Juint5 Unit Test</li>
+        <li>Mockito Junit5 Unit Test</li>
         </ul>
     </p>
 
