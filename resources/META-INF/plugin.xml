@@ -1,8 +1,8 @@
 <idea-plugin>
-    <id>0536</id>
-    <name>generateCrudCode</name>
-    <version>3.0.2</version>
-    <vendor email="guoguang0536@gmail.com" url="https://madaoo.com">GuoGuang</vendor>
+    <id>0537</id>
+    <name>generateCrud</name>
+    <version>3.0.3</version>
+    <vendor email="guoguang0536@gmail.com" >GuoGuang</vendor>
 
     <description>
         <![CDATA[
@@ -23,7 +23,7 @@
     </description>
 
     <change-notes><![CDATA[
-      3.0.2
+      3.0.3
     ]]>
     </change-notes>
 
