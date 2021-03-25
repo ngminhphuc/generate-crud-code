@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>0537</id>
     <name>Generate Crud</name>
-    <version>3.0.4</version>
+    <version>3.0.5</version>
     <vendor email="guoguang0536@gmail.com" >GuoGuang</vendor>
 
     <description>
@@ -23,7 +23,7 @@
     </description>
 
     <change-notes><![CDATA[
-      3.0.4
+      3.0.5
     ]]>
     </change-notes>
 
@@ -39,7 +39,7 @@
     </extensions>
 
     <actions>
-        <action id="codeGenerator" class="com.madao.plugin.GeneratorAction" text="生成代码">
+        <action id="codeGenerator" class="com.madao.plugin.GeneratorAction" text="Generator CRUD">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
         </action>
     </actions>
