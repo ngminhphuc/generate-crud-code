@@ -1,8 +1,10 @@
-# generate_crud_code
-generate crud code based on entity classes
+# 安装插件
+idea插件市场搜索Generate Crud安装
 
-Please right-click to generate the class defined with the Entity annotation,
- and the following module will be generated :
+# generate_crud_code
+根据实体类生成原始代码
+
+在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
 - Controller REST API with Swagger DOC API
 - DAO(JpaRepository)
 - DTO
@@ -10,8 +12,4 @@ Please right-click to generate the class defined with the Entity annotation,
 - Mapper mapstruct
 - Mockito Junit5 Unit Test
 
-## setps
-1. create entity class
-2. Right-click on "Generate Code" on the entity class to generate code
-
-![image](https://yd-note.oss-cn-beijing.aliyuncs.com/demo.gif)
+![image](https://yd-note.oss-cn-beijing.aliyuncs.com/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/DEMO.gif)
