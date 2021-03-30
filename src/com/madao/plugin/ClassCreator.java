@@ -117,34 +117,27 @@ public class ClassCreator {
                 annotationStringBuilder.append("@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)");
             }
 
-            if (null != psiAnnotation) {
-                PsiAnnotationMemberValue memberValue = psiAnnotation.findAttributeValue("columnDefinition");
-                if (null != memberValue) {
-                    String str = memberValue.getText();
-                    if (typeName.equals("String") && (str.contains("varchar") || str.contains("char"))) {
-                        str = str.replace("varchar(", "").replace("char(", "");
-                        int idx = str.indexOf(")");
-                        if (-1 != idx) {
-                            String lengthStr = str.substring(0, idx).replaceAll("\"", "");
-                            if (org.apache.commons.lang.StringUtils.isNotBlank(lengthStr)) {
-                                int length = Integer.valueOf(lengthStr);
-                                annotationStringBuilder.append("@Length(max = ").append(length).append(") ");
-                                this.importClass("org.hibernate.validator.constraints.Length");
-                            }
-                        }
-                    }
-
-                    if (str.contains("not null")) {
-                        if (typeName.equals("String")) {
-                            annotationStringBuilder.append("@NotBlank ");
-                            this.importClass("org.hibernate.validator.constraints.NotBlank");
-                        } else {
-                            annotationStringBuilder.append("@NotNull ");
-                            this.importClass("javax.validation.constraints.NotNull");
-                        }
-                    }
-                }
-            }
+	        if (null != psiAnnotation) {
+		        PsiAnnotationMemberValue memberLengthValue = psiAnnotation.findAttributeValue("length");
+		        if (null != memberLengthValue) {
+			        int length = Integer.parseInt(memberLengthValue.getText());
+			        annotationStringBuilder.append("@Size(max = ").append(length).append(") ");
+			        this.importClass("javax.validation.constraints.Size");
+		        }
+		        PsiAnnotationMemberValue memberValue = psiAnnotation.findAttributeValue("columnDefinition");
+		        if (null != memberValue) {
+			        String str = memberValue.getText();
+			        if (str.contains("not null")) {
+				        if ("String".equals(typeName)) {
+					        annotationStringBuilder.append("@NotBlank ");
+					        this.importClass("javax.validation.constraints.NotBlank");
+				        } else {
+					        annotationStringBuilder.append("@NotNull ");
+					        this.importClass("javax.validation.constraints.NotNull");
+				        }
+			        }
+		        }
+	        }
 
             PsiField cField = elementFactory.createFieldFromText(annotationStringBuilder.toString() + "private " + typeName + " " + name + ";", (PsiElement)null);
             aClass.add(cField);

@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>0537</id>
     <name>Generate Crud</name>
-    <version>3.0.5</version>
+    <version>3.0.6</version>
     <vendor email="guoguang0536@gmail.com" >GuoGuang</vendor>
 
     <description>
@@ -19,11 +19,24 @@
         </ul>
     </p>
 
+
+    <p>
+        根据实体类生成原始代码
+        在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
+        - Controller REST API with Swagger DOC API
+        - DAO(字段校验)
+        - DTO
+        - Service (分页)
+        - Mapper mapstruct
+        - Mockito Junit5 Unit Test
+        </ul>
+    </p>
+
 </p>]]>
     </description>
 
     <change-notes><![CDATA[
-      3.0.5
+      <p>Generate DTO with verification properties</p>
     ]]>
     </change-notes>
 
