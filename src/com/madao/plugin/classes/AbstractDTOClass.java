@@ -11,7 +11,7 @@ public class AbstractDTOClass {
 
     public static String getCoreString() {
         return "import java.time.LocalDateTime;\n\n " +
-         "public class AbstractDTO <E> {\n\n    " +
+         "public class AbstractDto <E> {\n\n    " +
                 "private E id;\n\n    " +
                 "private LocalDateTime createAt;\n\n    " +
                 "private LocalDateTime lastModifiedAt;\n\n    " +

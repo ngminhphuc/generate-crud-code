@@ -111,7 +111,7 @@ public class GeneratorAction extends AnAction {
                 .importClass("org.junit.runner.RunWith").importClass("org.mockito.InjectMocks")
                 .importClass("org.mockito.Mock").importClass("org.mockito.Mockito")
                 .importClass("org.mockito.ArgumentMatchers")
-                .importClass("java.util.List")
+                .importClass("org.springframework.transaction.annotation.Transactional")
                 .importClass("ResourceNotFoundException")
                 .importClass("BeanUtil")
                 .importClass("org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc")
@@ -130,11 +130,13 @@ public class GeneratorAction extends AnAction {
                 .importClass("org.springframework.beans.factory.annotation.Autowired")
                 .importClass("org.mockito.ArgumentMatchers.*")
                 .importClass("org.springframework.test.web.servlet.result.MockMvcResultMatchers")
-                .importClass("org.hamcrest.core.Is").
-                importClass("org.mockito.ArgumentMatchers")
-                .importClass("org.mockito.Mockito")
+                .importClass("org.hamcrest.core.Is")
+                .importClass("org.mockito.*")
+                .importClass("org.mockito.MockitoAnnotations")
+                .importClass("org.junit.jupiter.api.BeforeEach")
                 .importClass(entityClasses.getEntityClassName()+"Builder")
-                .importClass("CustomUtils").addTo(this.controllerTestDirectory);
+                .importClass("CustomUtils")
+		        .addTo(this.controllerTestDirectory);
     }
 
     private void createClasses(EntityClasses entityClasses) {
@@ -144,10 +146,10 @@ public class GeneratorAction extends AnAction {
 
         String entityName = className.replace("Entity", "");
         PsiDirectory dtoDirectory = null == this.containerDirectory.getParent() ? this.containerDirectory : this.psiUtils.getOrCreateSubDirectory(this.containerDirectory.getParent(), "dto");
-        String dtoContent = "public class " + entityName + "DTO extends AbstractDTO<" + entityClasses.getIdType() + ">";
-        ClassCreator.of(this.project).init("AbstractDTO", AbstractDTOClass.getCoreString()).addTo(dtoDirectory);
+        String dtoContent = "public class " + entityName + "Dto extends AbstractDto<" + entityClasses.getIdType() + ">";
+        ClassCreator.of(this.project).init("AbstractDto", AbstractDTOClass.getCoreString()).addTo(dtoDirectory);
         dtoContent = dtoContent + "{}";
-        ClassCreator.of(this.project).init(entityName + "DTO", dtoContent).copyFields(entityClasses.getEntityClass()).addTo(dtoDirectory).and((dtoClass) -> {
+        ClassCreator.of(this.project).init(entityName + "Dto", dtoContent).copyFields(entityClasses.getEntityClass()).addTo(dtoDirectory).and((dtoClass) -> {
             this.createMapperClass(entityClasses.setDtoClass(dtoClass));
         });
     }
@@ -316,8 +318,8 @@ public class GeneratorAction extends AnAction {
                 .append("}")
                 .append("@PostMapping ")
                 .append("public Result<Void> save(@RequestBody @Validated ")
-                .append(entityClasses.getDtoClass().getName()).append(" ").append(entityFieldName + "DTO").append(") { ")
-                .append(entityName + " " + entityFieldName + " = " + entityFieldName + "Mapper.toEntity(" + entityFieldName + "DTO);")
+                .append(entityClasses.getDtoClass().getName()).append(" ").append(entityFieldName + "Dto").append(") { ")
+                .append(entityName + " " + entityFieldName + " = " + entityFieldName + "Mapper.toEntity(" + entityFieldName + "Dto);")
                 .append("return Result.ok(" + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.save(" + entityFieldName + "))); }")
                 .append("@GetMapping(\"/{id}\") public Result<" + entityClasses.getDtoClass().getName() + "> findById(@PathVariable(\"id\") ")
                 .append(entityClasses.getIdField().getType().getPresentableText() + " id) {")
@@ -326,21 +328,18 @@ public class GeneratorAction extends AnAction {
                 .append("@DeleteMapping(\"/{id}\") public Result<Void> delete(@PathVariable(\"id\") ")
                 .append(entityClasses.getIdField().getType().getPresentableText() + " id) {").append(entityFieldName)
                 .append("Service.deleteById(id);}")
-                .append("@GetMapping public List<")
-                .append(entityClasses.getDtoClass().getName()).append("> list() { return Result.ok(")
-                .append(entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.findAll())); }")
                 .append("@GetMapping(\"/page-query\") public Result<Page<")
-                .append(entityClasses.getDtoClass().getName()).append(">> pageQuery(@PageableDefault(sort = \"createAt\", direction = direction = Sort.Direction.DESC) Pageable pageable) {  ")
-                .append("Page<" + entityName + "> " + entityFieldName + "Page = " + entityFieldName + "Service.findAll(pageable);")
-                .append("List<" + entityName + "DTO> dtoList =" + entityFieldName + "Page\n                .stream()\n                .map(" + entityFieldName + "Mapper::toDto).collect(Collectors.toList());")
+                .append(entityClasses.getDtoClass().getName()).append(">> pageQuery("+entityClasses.getDtoClass().getName() + " "+entityFieldName+"Dto, @PageableDefault(sort = \"createAt\", direction = Sort.Direction.DESC) Pageable pageable) {  ")
+                .append("Page<" + entityName + "> " + entityFieldName + "Page = " + entityFieldName + "Service.findByCondition(" + entityFieldName + "Dto,pageable);")
+                .append("List<" + entityName + "Dto> dtoList =" + entityFieldName + "Page.stream()\n                .map(" + entityFieldName + "Mapper::toDto).collect(Collectors.toList());")
                 .append("return Result.ok(new PageImpl<>(dtoList, pageable, " + entityFieldName + "Page.getTotalElements())) ;}")
                 .append("@PutMapping(\"/{id}\") public Result<Void>")
-                .append(" update(@RequestBody @Validated " + entityClasses.getDtoClass().getName() + " " + entityFieldName + "DTO, @PathVariable(\"id\") " + entityClasses.getIdField().getType().getPresentableText() + " id) { ")
-                .append(entityName + " " + entityFieldName + " =" + entityFieldName + "Mapper.toEntity(" + entityFieldName + "DTO);")
+                .append(" update(@RequestBody @Validated " + entityClasses.getDtoClass().getName() + " " + entityFieldName + "Dto, @PathVariable(\"id\") " + entityClasses.getIdField().getType().getPresentableText() + " id) { ")
+                .append(entityName + " " + entityFieldName + " =" + entityFieldName + "Mapper.toEntity(" + entityFieldName + "Dto);")
                 .append("return Result.ok(" + entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.update(" + entityFieldName + ", id)));}")
                 .append("}");
         ClassCreator.of(this.project).init(entityClasses.getEntityName() + suffix, content.toString())
-                .importClass("org.springframework.http.HttpStatus")
+                .importClass("org.springframework.data.web.PageableDefault")
                 .importClass("org.springframework.web.bind.annotation.RequestMapping")
                 .importClass("org.springframework.web.bind.annotation.PostMapping")
                 .importClass("GetMapping").importClass("DeleteMapping")
@@ -377,7 +376,7 @@ public class GeneratorAction extends AnAction {
     }
     private void createBuilderClass(EntityClasses entityClasses) {
         String utils = entityClasses.getEntityClassName()+"Builder";
-        String content = ContentClass.getBuilderClass();
+        String content = ContentClass.getBuilderClass(entityClasses);
         ClassCreator.of(this.testProject).init(utils, content)
 		        .importClass("com.fasterxml.jackson.databind.ObjectMapper")
 		        .addTo(this.controllerTestDirectory);

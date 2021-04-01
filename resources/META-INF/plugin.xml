@@ -19,8 +19,18 @@
         </ul>
     </p>
 
-
     <p>
+        Dependencies:
+        <ul>
+            <li>Spring Boot Data Jpa 2.4.X</li>
+            <li>Junit 5</li>
+            <li>springfox-boot-starter 3.0.0</li>
+            <li>mapstruct 1.4.2.Final</li>
+            <li>mapstruct-processor 1.4.2.Final</li>
+        </ul>
+    </p>
+
+ <p>
         根据实体类生成原始代码
         在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
          <ul>
@@ -29,18 +39,8 @@
             <li>DTO</li>
             <li>Service (分页)</li>
             <li>Mapper mapstruct</li>
-            <li>Mockito Junit5 Unit Test</li>
+            <li>单元测试</li>
          </ul>
-    </p>
-
-    <p>
-        Dependencies:
-        <ul>
-            <li>Spring Boot Data Jpa 2.4.X</li>
-            <li>springfox-boot-starter 3.0.0</li>
-            <li>mapstruct 1.4.2.Final</li>
-            <li>mapstruct-processor 1.4.2.Final</li>
-        </ul>
     </p>
 
 
