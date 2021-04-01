@@ -23,22 +23,31 @@
     <p>
         根据实体类生成原始代码
         在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
-        - Controller REST API with Swagger DOC API
-        - DAO(字段校验)
-        - DTO
-        - Service (分页)
-        - Mapper mapstruct
-        - Mockito Junit5 Unit Test
+         <ul>
+            <li>Controller REST API with Swagger DOC API</li>
+            <li>DAO(字段校验)</li>
+            <li>DTO</li>
+            <li>Service (分页)</li>
+            <li>Mapper mapstruct</li>
+            <li>Mockito Junit5 Unit Test</li>
+         </ul>
+    </p>
+
+    <p>
+        Dependencies:
+        <ul>
+            <li>Spring Boot Data Jpa 2.4.X</li>
+            <li>springfox-boot-starter 3.0.0</li>
+            <li>mapstruct 1.4.2.Final</li>
+            <li>mapstruct-processor 1.4.2.Final</li>
         </ul>
     </p>
+
 
 </p>]]>
     </description>
 
-    <change-notes><![CDATA[
-      <p>Generate DTO with verification properties</p>
-    ]]>
-    </change-notes>
+    <change-notes/>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="193.0"/>
@@ -52,8 +61,8 @@
     </extensions>
 
     <actions>
-        <action id="codeGenerator" class="com.madao.plugin.GeneratorAction" text="Generator CRUD">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+        <action id="codeCrudGenerator" class="com.madao.plugin.GeneratorAction" text="Generator CRUD">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="WeighingNewGroup"/>
         </action>
     </actions>
 
