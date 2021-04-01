@@ -5,6 +5,7 @@
 
 package com.madao.plugin;
 
+import com.intellij.jpa.frameworks.data.util.parser.domain.Sort;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
+import java.awt.print.Pageable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -328,7 +330,7 @@ public class GeneratorAction extends AnAction {
                 .append(entityClasses.getDtoClass().getName()).append("> list() { return Result.ok(")
                 .append(entityFieldName + "Mapper.toDto(" + entityFieldName + "Service.findAll())); }")
                 .append("@GetMapping(\"/page-query\") public Result<Page<")
-                .append(entityClasses.getDtoClass().getName()).append(">> pageQuery(@PageableDefault(sort = \"createAt\", direction = DESC) Pageable pageable) {  ")
+                .append(entityClasses.getDtoClass().getName()).append(">> pageQuery(@PageableDefault(sort = \"createAt\", direction = direction = Sort.Direction.DESC) Pageable pageable) {  ")
                 .append("Page<" + entityName + "> " + entityFieldName + "Page = " + entityFieldName + "Service.findAll(pageable);")
                 .append("List<" + entityName + "DTO> dtoList =" + entityFieldName + "Page\n                .stream()\n                .map(" + entityFieldName + "Mapper::toDto).collect(Collectors.toList());")
                 .append("return Result.ok(new PageImpl<>(dtoList, pageable, " + entityFieldName + "Page.getTotalElements())) ;}")
@@ -339,7 +341,7 @@ public class GeneratorAction extends AnAction {
                 .append("}");
         ClassCreator.of(this.project).init(entityClasses.getEntityName() + suffix, content.toString())
                 .importClass("org.springframework.http.HttpStatus")
-                .importClass("org.springframework.web.bind.annotation.RequestMaping")
+                .importClass("org.springframework.web.bind.annotation.RequestMapping")
                 .importClass("org.springframework.web.bind.annotation.PostMapping")
                 .importClass("GetMapping").importClass("DeleteMapping")
                 .importClass("org.springframework.web.bind.annotation.RequestBody")
@@ -353,6 +355,7 @@ public class GeneratorAction extends AnAction {
                 .importClass("java.util.List")
                 .importClass("java.util.stream.Collectors")
                 .importClass("org.springframework.validation.annotation.Validated")
+			    .importClass("org.springframework.data.domain.Sort")
                 .importClass(entityClasses.getControllerClass())
                 .importClass(entityClasses.getEntityClass())
                 .importClass(entityClasses.getDtoClass())
@@ -401,7 +404,8 @@ public class GeneratorAction extends AnAction {
 		        + repositoryName + " extends JpaRepository<" + entityClasses.getEntityClassName() + ", " + entityClasses.getIdType() + ">"
 		        + ", JpaSpecificationExecutor<" + entityClasses.getEntityClassName() +">{}")
 		        .importClass(entityClasses.getEntityClass())
-		        .importClass("PagingAndSortingRepository")
+		        .importClass("org.springframework.data.jpa.repository.JpaRepository")
+		        .importClass("org.springframework.data.jpa.repository.JpaSpecificationExecutor")
 		        .importClass("org.springframework.stereotype.Repository")
 		        .addTo(repositoryDirectory)
 		        .and((repositoryClass) -> {
