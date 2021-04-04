@@ -31,12 +31,8 @@ public class ContentClass {
 				"    }"+
 				""+
 				"@Test\n" +
-				"    void findAllByPage() throws Exception {\n" +
-				"\n" +
-				"        "+ entityClasses.getEntityName() + "Dto "+ entityClasses.getEntityName().toLowerCase() + " = new "+ entityClasses.getEntityName() + "Dto();\n" +
-				"        "+ entityClasses.getEntityName().toLowerCase() + ".setId(\"1\");\n" +
-				"\n" +
-				"        Page<"+ entityClasses.getEntityName() + "Dto> page = new PageImpl<>(Collections.singletonList("+ entityClasses.getEntityName().toLowerCase() + "));\n" +
+				"  public void findAllByPage() throws Exception {\n" +
+				"        Page<"+ entityClasses.getEntityName() + "Dto> page = new PageImpl<>(Collections.singletonList("+ entityClasses.getEntityName() + "Builder.getDto()));\n" +
 				"\n" +
 				"\t    Mockito.when("+ entityClasses.getEntityName().toLowerCase() + "Service.findByCondition(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(page);\n" +
 				"\n" +
@@ -51,35 +47,31 @@ public class ContentClass {
 				"\n" +
 				"    }"+
 				"@Test\n    public void getById() throws Exception {\n        Mockito.when("
-				+ entityClasses.getEntityName().toLowerCase() + "Mapper.toDto(("+entityClasses.getEntityName()+")ArgumentMatchers.any())).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        Mockito.when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service.findById(ArgumentMatchers.any"
-				+ entityClasses.getIdTypeUpperCaseFirstChar() + "())).thenReturn(java.util.Optional.of("
-				+ entityClasses.getEntityName() + "Builder.getEntity()));\n\n        mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + \"/1\"))\n                " +
+				+ entityClasses.getIdTypeUpperCaseFirstChar() + "())).thenReturn("
+				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + \"/1\"))\n                " +
 				".andExpect(MockMvcResultMatchers.status().isOk())\n                .andExpect(MockMvcResultMatchers.content()\n                        " +
 				".contentType(MediaType.APPLICATION_JSON_UTF8))\n                .andExpect(MockMvcResultMatchers.jsonPath(\"$.id\", Is.is(1)));\n        Mockito.verify("
 				+ entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).findById(\"1\");\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n\n    @Test\n    public void save() throws Exception {\n       Mockito.when("
-				+ entityClasses.getEntityName().toLowerCase() + "Mapper.toEntity(("+entityClasses.getEntityName()+"Dto)ArgumentMatchers.any())).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getEntity());\n        Mockito.when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service.save(ArgumentMatchers.any("
-				+ entityClasses.getEntityName() + ".class))).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getEntity());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.post(ENDPOINT_URL)\n                        .contentType(MediaType.APPLICATION_JSON_UTF8)\n                        .content(CustomUtils.asJsonString("
+				+ entityClasses.getEntityName() + "Dto.class))).thenReturn("
+				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.post(ENDPOINT_URL)\n                        .contentType(MediaType.APPLICATION_JSON_UTF8)\n                        .content(CustomUtils.asJsonString("
 				+ entityClasses.getEntityName() + "Builder.getDto())))\n                .andExpect(MockMvcResultMatchers.status().isCreated());\n        Mockito.verify("
 				+ entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).save(ArgumentMatchers.any("
-				+ entityClasses.getEntityName() + ".class));\n        Mockito.verifyNoMoreInteractions("
+				+ entityClasses.getEntityName() + "Dto.class));\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n\n    @Test\n    public void update() throws Exception {\n        Mockito.when("
-				+ entityClasses.getEntityName().toLowerCase() + "Mapper.toEntity(("+entityClasses.getEntityName()+"Dto)ArgumentMatchers.any())).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getEntity());\n        Mockito.when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service.update(ArgumentMatchers.any(), ArgumentMatchers.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "())).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getEntity());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.put(ENDPOINT_URL + \"/1\")\n                        .contentType(MediaType.APPLICATION_JSON_UTF8)\n                        .content(CustomUtils.asJsonString("
+				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.put(ENDPOINT_URL + \"/1\")\n                        .contentType(MediaType.APPLICATION_JSON_UTF8)\n                        .content(CustomUtils.asJsonString("
 				+ entityClasses.getEntityName() + "Builder.getDto())))\n                .andExpect(MockMvcResultMatchers.status().isOk());\n        Mockito.verify(" + entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).update(ArgumentMatchers.any("
-				+ entityClasses.getEntityName() + ".class), ArgumentMatchers.any"
+				+ entityClasses.getEntityName() + "Dto.class), ArgumentMatchers.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n\n    @Test\n    public void delete() throws Exception {\n        Mockito.doNothing().when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service).deleteById(ArgumentMatchers.any"
-				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        mockMvc.perform(\n                MockMvcRequestBuilders.delete(ENDPOINT_URL + \"/1\"))\n                .andExpect(MockMvcResultMatchers.status().isOk());\n        Mockito.verify("
+				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        mockMvc.perform(\n                MockMvcRequestBuilders.delete(ENDPOINT_URL + \"/1\")\n" +
+				"\t\t\t\t.contentType(MediaType.APPLICATION_JSON_UTF8)\n" +
+				"\t\t\t\t.content(CustomUtils.asJsonString("+ entityClasses.getEntityName() + "Builder.getIds()))).andExpect(MockMvcResultMatchers.status().isOk());\n        Mockito.verify("
 				+ entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).deleteById(Mockito.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n }";
@@ -98,13 +90,17 @@ public class ContentClass {
 	}
 
 	public static String getBuilderClass(EntityClasses entityClasses) {
-		return "public class "+entityClasses.getEntityName()+"Builder { " +
-				"public static "+entityClasses.getEntityName()+"Dto getDto() {\n" +
-				"\t\treturn "+entityClasses.getEntityName().toLowerCase()+"Mapper.toDto(new "+entityClasses.getEntityName()+"());\n" +
-				"\t}\n" +
-				"\tpublic static "+entityClasses.getEntityName()+" getEntity() {\n" +
-				"\t\treturn "+entityClasses.getEntityName().toLowerCase()+"Mapper.toEntity(new "+entityClasses.getEntityName()+"Dto());\n" +
-				"\t}" +
+		return "import java.util.List; \n\n" +
+				"public class "+entityClasses.getEntityName()+"Builder {" +
+				"public static List<String> getIds() {\n" +
+				"        return Collections.singletonList(\"1\");\n" +
+				"    }\n" +
+				"\n" +
+				"    public static "+entityClasses.getEntityName()+"Dto getDto() {\n" +
+				"        "+entityClasses.getEntityName()+"Dto dto = new "+entityClasses.getEntityName()+"Dto();\n" +
+				"        dto.setId(\"1\");\n" +
+				"        return dto;\n" +
+				"    }\n" +
 				"}";
 	}
 }
