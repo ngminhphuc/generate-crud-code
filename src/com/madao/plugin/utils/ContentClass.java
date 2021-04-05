@@ -13,9 +13,10 @@ public class ContentClass {
 
 	public static String getTestContent(EntityClasses entityClasses) {
 		String className = entityClasses.getControllerClass().getName();
-		return "@Transactional\npublic class " + className + "Test {\n    //TODO: create the data Test generator class "
-				+ entityClasses.getEntityName() + "Builder\n    private static final String ENDPOINT_URL = \"/"
-				+ entityClasses.getControllerPath() + "s\";\n @InjectMocks\n    private "+entityClasses.getEntityName()+"MapperImpl "+entityClasses.getEntityName().toLowerCase() +"Mapper;\n       @InjectMocks\n    private "
+		return "@Transactional\npublic class " + className + "Test {\n    "
+				+ "private static final String ENDPOINT_URL = \"/"
+				+ entityClasses.getControllerPath() + "s\";" +
+				"@InjectMocks\n    private "
 				+ entityClasses.getControllerClass().getName()+" "
 				+ entityClasses.getEntityName().toLowerCase() + "Controller;\n    @Mock\n    private "
 				+ entityClasses.getEntityName() + "Service "
