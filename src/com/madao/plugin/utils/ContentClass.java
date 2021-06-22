@@ -52,26 +52,26 @@ public class ContentClass {
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "())).thenReturn("
 				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + \"/1\"))\n                " +
 				".andExpect(MockMvcResultMatchers.status().isOk())\n                .andExpect(MockMvcResultMatchers.content()\n                        " +
-				".contentType(MediaType.APPLICATION_JSON_UTF8))\n                .andExpect(MockMvcResultMatchers.jsonPath(\"$.id\", Is.is(1)));\n        Mockito.verify("
+				".contentType(MediaType.APPLICATION_JSON))\n                .andExpect(MockMvcResultMatchers.jsonPath(\"$.id\", Is.is(1)));\n        Mockito.verify("
 				+ entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).findById(\"1\");\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n\n    @Test\n    public void save() throws Exception {\n       Mockito.when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service.save(ArgumentMatchers.any("
 				+ entityClasses.getEntityName() + "Dto.class))).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.post(ENDPOINT_URL)\n                        .contentType(MediaType.APPLICATION_JSON_UTF8)\n                        .content(CustomUtils.asJsonString("
+				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.post(ENDPOINT_URL)\n                        .contentType(MediaType.APPLICATION_JSON)\n                        .content(CustomUtils.asJsonString("
 				+ entityClasses.getEntityName() + "Builder.getDto())))\n                .andExpect(MockMvcResultMatchers.status().isCreated());\n        Mockito.verify("
 				+ entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).save(ArgumentMatchers.any("
 				+ entityClasses.getEntityName() + "Dto.class));\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n\n    @Test\n    public void update() throws Exception {\n        Mockito.when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service.update(ArgumentMatchers.any(), ArgumentMatchers.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "())).thenReturn("
-				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.put(ENDPOINT_URL + \"/1\")\n                        .contentType(MediaType.APPLICATION_JSON_UTF8)\n                        .content(CustomUtils.asJsonString("
+				+ entityClasses.getEntityName() + "Builder.getDto());\n\n        mockMvc.perform(\n                MockMvcRequestBuilders.put(ENDPOINT_URL + \"/1\")\n                        .contentType(MediaType.APPLICATION_JSON)\n                        .content(CustomUtils.asJsonString("
 				+ entityClasses.getEntityName() + "Builder.getDto())))\n                .andExpect(MockMvcResultMatchers.status().isOk());\n        Mockito.verify(" + entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).update(ArgumentMatchers.any("
 				+ entityClasses.getEntityName() + "Dto.class), ArgumentMatchers.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        Mockito.verifyNoMoreInteractions("
 				+ entityClasses.getEntityName().toLowerCase() + "Service);\n    }\n\n    @Test\n    public void delete() throws Exception {\n        Mockito.doNothing().when("
 				+ entityClasses.getEntityName().toLowerCase() + "Service).deleteById(ArgumentMatchers.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        mockMvc.perform(\n                MockMvcRequestBuilders.delete(ENDPOINT_URL + \"/1\")\n" +
-				"\t\t\t\t.contentType(MediaType.APPLICATION_JSON_UTF8)\n" +
+				"\t\t\t\t.contentType(MediaType.APPLICATION_JSON)\n" +
 				"\t\t\t\t.content(CustomUtils.asJsonString("+ entityClasses.getEntityName() + "Builder.getIds()))).andExpect(MockMvcResultMatchers.status().isOk());\n        Mockito.verify("
 				+ entityClasses.getEntityName().toLowerCase() + "Service, Mockito.times(1)).deleteById(Mockito.any"
 				+ entityClasses.getIdTypeUpperCaseFirstChar() + "());\n        Mockito.verifyNoMoreInteractions("
