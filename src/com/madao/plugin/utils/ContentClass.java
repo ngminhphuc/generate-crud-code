@@ -15,7 +15,7 @@ public class ContentClass {
 		String className = entityClasses.getControllerClass().getName();
 		return "@Transactional\npublic class " + className + "Test {\n    "
 				+ "private static final String ENDPOINT_URL = \"/"
-				+ entityClasses.getControllerPath() + "s\";" +
+				+ entityClasses.getControllerPath() + ";" +
 				"@InjectMocks\n    private "
 				+ entityClasses.getControllerClass().getName()+" "
 				+ entityClasses.getEntityName().toLowerCase() + "Controller;\n    @Mock\n    private "
