@@ -1,7 +1,7 @@
 # 安装插件
 idea插件市场搜索Generate Crud安装
 
-# generate_crud_code
+# Generate_Crud_Code
 根据实体类生成原始代码
 
 在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
@@ -11,7 +11,6 @@ idea插件市场搜索Generate Crud安装
 - Service (with page query)
 - Mapper mapstruct
 - Mockito Junit5 Unit Test
-
 
 生成的DTO如果需要加验证，在@Column注解上定义columnDefinition属性和length属性
 例如： 
@@ -40,56 +39,66 @@ Controller层返回标准Result，生成后自己调整即可
 
 <!-- 这一块主要是找到生成的类文件 -->
  <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
-            <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
-                <annotationProcessorPaths>
-                    <path>
-                        <groupId>org.mapstruct</groupId>
-                        <artifactId>mapstruct-processor</artifactId>
-                        <version>1.4.2.Final</version>
-                    </path>
-                </annotationProcessorPaths>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.22.0</version>
-        </plugin>
-    </plugins>
-    <resources>
-        <resource>
-            <directory>src/main/java</directory>
-            <includes>
-                <include>**/*.properties</include>
-                <include>**/*.xml</include>
-            </includes>
-            <filtering>false</filtering>
-        </resource>
-        <resource>
-            <directory>src/main/resources</directory>
-            <filtering>true</filtering>
-        </resource>
-        <resource>
-            <directory>src/main/resources</directory>
-            <includes>
-                <include>**/*.properties</include>
-                <include>**/*.xml</include>
-            </includes>
-            <filtering>false</filtering>
-        </resource>
-    </resources>
-</build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.4.2.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
 ```
 生成文件后需要标记生成的文件为代码(src/generated-sources/java目录标记为Generated Sources Root)
 ![generated-sources标记为源码.png](https://vue-admin-guoguang.oss-cn-shanghai.aliyuncs.com/generated-sources%E6%A0%87%E8%AE%B0%E4%B8%BA%E6%BA%90%E7%A0%81.png)
+
+# 感谢
+👤 **GuoGuang**
+
+如果此项目帮到了你,还请不忘star哦🌟,你的关注是我的动力
+
+# License
+[Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+Copyright (c) 2021-present GuoGuang
