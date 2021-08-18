@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>0537</id>
     <name>Generate Crud</name>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
     <vendor email="guoguang0536@gmail.com" >GuoGuang</vendor>
 
     <description>
@@ -49,6 +49,7 @@
     <![CDATA[
         <p>
             <ul><li>3.0.7 Adding junit test</li>
+            <ul><li>3.0.8 DTO.class add check field</li>
              </p>
             </p>]]>
     <change-notes>
