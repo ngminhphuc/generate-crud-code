@@ -124,17 +124,14 @@ public class ClassCreator {
 			        annotationStringBuilder.append("@Size(max = ").append(length).append(") ");
 			        this.importClass("javax.validation.constraints.Size");
 		        }
-		        PsiAnnotationMemberValue memberValue = psiAnnotation.findAttributeValue("columnDefinition");
-		        if (null != memberValue) {
-			        String str = memberValue.getText();
-			        if (str.contains("not null")) {
-				        if ("String".equals(typeName)) {
-					        annotationStringBuilder.append("@NotBlank ");
-					        this.importClass("javax.validation.constraints.NotBlank");
-				        } else {
-					        annotationStringBuilder.append("@NotNull ");
-					        this.importClass("javax.validation.constraints.NotNull");
-				        }
+		        PsiAnnotationMemberValue nullableValue = psiAnnotation.findAttributeValue("nullable");
+		        if ("false".equals(nullableValue.getText())){
+			        if ("String".equals(typeName)) {
+				        annotationStringBuilder.append("@NotBlank ");
+				        this.importClass("javax.validation.constraints.NotBlank");
+			        } else {
+				        annotationStringBuilder.append("@NotNull ");
+				        this.importClass("javax.validation.constraints.NotNull");
 			        }
 		        }
 	        }

@@ -15,7 +15,7 @@ idea插件市场搜索Generate Crud安装
 生成的DTO如果需要加验证，在@Column注解上定义columnDefinition属性和length属性
 例如： 
 ```
-@Column(length = 100,columnDefinition = "not null")
+@Column(length = 100,nullable = false)
 ```
 DTO将生成如下字段
 ```
