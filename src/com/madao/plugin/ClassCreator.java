@@ -119,24 +119,28 @@ public class ClassCreator {
 
 	        if (null != psiAnnotation) {
 		        PsiAnnotationMemberValue memberLengthValue = psiAnnotation.findAttributeValue("length");
-		        if (null != memberLengthValue) {
-			        int length = Integer.parseInt(memberLengthValue.getText());
-			        annotationStringBuilder.append("@Size(max = ").append(length).append(") ");
-			        this.importClass("javax.validation.constraints.Size");
-		        }
 		        PsiAnnotationMemberValue nullableValue = psiAnnotation.findAttributeValue("nullable");
 		        if ("false".equals(nullableValue.getText())){
 			        if ("String".equals(typeName)) {
 				        annotationStringBuilder.append("@NotBlank ");
 				        this.importClass("javax.validation.constraints.NotBlank");
-			        } else {
+				        if (null != memberLengthValue) {
+					        int length = Integer.parseInt(memberLengthValue.getText());
+					        annotationStringBuilder.append("@Size(max = ").append(length).append(") ");
+					        this.importClass("javax.validation.constraints.Size");
+				        }
+			        }else if(StringUtils.containsAny(typeName,"List","Map","Set") ){
+				        annotationStringBuilder.append("@NotEmpty ");
+				        this.importClass("javax.validation.constraints.NotEmpty");
+			        }  else{
 				        annotationStringBuilder.append("@NotNull ");
 				        this.importClass("javax.validation.constraints.NotNull");
 			        }
 		        }
 	        }
 
-            PsiField cField = elementFactory.createFieldFromText(annotationStringBuilder.toString() + "private " + typeName + " " + name + ";", (PsiElement)null);
+
+	        PsiField cField = elementFactory.createFieldFromText(annotationStringBuilder.toString() + "private " + typeName + " " + name + ";", (PsiElement)null);
             aClass.add(cField);
             PsiMethod normalSetter = elementFactory.createMethodFromText(this.createSetter(name, type.getCanonicalText()), field);
             PsiMethod getter = elementFactory.createMethodFromText(this.createGetter(name, type.getCanonicalText()), field);
