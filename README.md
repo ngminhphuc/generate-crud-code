@@ -28,7 +28,8 @@ private String ipAddress;
 # note
 Controller层返回标准Result，生成后自己调整即可
 
-## pom.xml文件参考配置
+## 在项目中使用
+### pom.xml文件参考配置
 ```
 <!-- mapstruct依赖 -->
 <dependency>

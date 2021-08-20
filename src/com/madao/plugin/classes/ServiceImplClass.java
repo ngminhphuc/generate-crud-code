@@ -35,7 +35,6 @@ public class ServiceImplClass {
 		        .append("Dto findById(" + entityClasses.getIdType() + " id) { ")
 		        .append("return " + entityFieldName + "Mapper.toDto(repository.findById(id).orElseThrow(ResourceNotFoundException::new));}")
 		        .append("public Page<").append(entityClasses.getEntityClass().getName()).append("Dto> findByCondition("+entityClasses.getEntityClass().getName()+"Dto "+entityFieldName+"Dto,Pageable pageable) {")
-				.append(entityName + " " + entityFieldName + " = " + entityFieldName + "Mapper.toEntity(" + entityFieldName + "Dto);")
 				.append("Page<" + entityClasses.getEntityClass().getName() + "> entityPage=repository.findAll(pageable);")
 		        .append("List<" + entityClasses.getEntityClass().getName() + "> entities= entityPage.getContent();")
 		        .append("return new PageImpl<>(" + entityFieldName + "Mapper.toDto(entities), pageable, entityPage.getTotalElements());}")
