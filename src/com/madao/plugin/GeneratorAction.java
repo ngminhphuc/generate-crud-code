@@ -197,7 +197,7 @@ public class GeneratorAction extends AnAction {
 
         String serviceName = entityClasses.getEntityName().concat("Service");
         PsiDirectory serviceImplDirectory = entityClasses.getServiceDirectory();
-        StringBuilder content = (new StringBuilder("@Service @Transactional public class "))
+        StringBuilder content = (new StringBuilder("@Slf4j @Service @Transactional public class "))
                 .append(serviceName).append("{");
         PsiClass repositoryClass = entityClasses.getRepositoryClass();
         String saveAllMethod = "save";
@@ -210,7 +210,9 @@ public class GeneratorAction extends AnAction {
         ClassCreator.of(this.project).init(serviceName, content.toString())
                 .importClass(entityClasses.getEntityClass())
                 .importClass("org.springframework.stereotype.Service")
-                .importClass("Transactional").importClass("java.util.Optional")
+                .importClass("Transactional")
+                .importClass("Slf4j")
+		        .importClass("java.util.Optional")
                 .importClass("java.util.List").importClass("PageHelper")
                 .importClass("AbstractBaseEntityService")
                 .importClass("com.github.pagehelper.PageInfo")
@@ -308,7 +310,10 @@ public class GeneratorAction extends AnAction {
         controllerPath = var10000 + controllerPath.substring(1);
         entityClasses.setControllerPath(controllerPath);
         StringBuilder content = new StringBuilder();
-        content.append("@RequestMapping(\"").append(prefix).append(controllerPath).append("\")").append("@RestController");
+        content.append("@RequestMapping(\"").append(prefix).append(controllerPath).append("\")")
+		        .append("@RestController")
+		        .append("@Slf4j")
+		        .append("@Api(\""+controllerPath+"\")");
         content.append(" public class ").append(entityName).append(suffix);
         String entityFieldName = MyStringUtils.firstLetterToLower(entityName);
         entityClasses.setEntityFieldName(entityFieldName);
@@ -348,6 +353,8 @@ public class GeneratorAction extends AnAction {
                 .importClass("GetMapping").importClass("DeleteMapping")
                 .importClass("org.springframework.web.bind.annotation.RequestBody")
                 .importClass("PathVariable")
+                .importClass("Slf4j")
+                .importClass("Api")
                 .importClass("RequestParam")
                 .importClass("org.springframework.data.domain.Pageable")
                 .importClass("org.springframework.data.domain.PageImpl")
