@@ -20,6 +20,11 @@
     </p>
 
     <p>
+        For more information about Generate Crud please visit:
+        <a href="https://github.com/GuoGuang/generate-crud-code">GitHub</a>
+    </p>
+
+    <p>
         Dependencies:
         <ul>
             <li>Spring Boot Data Jpa 2.4.X</li>
