@@ -6,27 +6,16 @@ package com.madao.plugin;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
+import com.madao.plugin.utils.PsiUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import com.madao.plugin.utils.PsiUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 public class ClassCreator {
     private PsiJavaFile javaFile;
@@ -121,7 +110,7 @@ public class ClassCreator {
 		        PsiAnnotationMemberValue memberLengthValue = psiAnnotation.findAttributeValue("length");
 		        PsiAnnotationMemberValue nullableValue = psiAnnotation.findAttributeValue("nullable");
 		        if ("false".equals(nullableValue.getText())){
-			        if ("String".equals(typeName)) {
+			        if ("String".equals(typeName) && !name.equalsIgnoreCase("id")) {
 				        annotationStringBuilder.append("@NotBlank ");
 				        this.importClass("javax.validation.constraints.NotBlank");
 				        if (null != memberLengthValue) {
@@ -132,7 +121,7 @@ public class ClassCreator {
 			        }else if(StringUtils.containsAny(typeName,"List","Map","Set") ){
 				        annotationStringBuilder.append("@NotEmpty ");
 				        this.importClass("javax.validation.constraints.NotEmpty");
-			        }  else{
+			        }  else if (!name.equalsIgnoreCase("id")){
 				        annotationStringBuilder.append("@NotNull ");
 				        this.importClass("javax.validation.constraints.NotNull");
 			        }
