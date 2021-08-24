@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class ClassCreator {
@@ -109,6 +111,14 @@ public class ClassCreator {
 	        if (null != psiAnnotation) {
 		        PsiAnnotationMemberValue memberLengthValue = psiAnnotation.findAttributeValue("length");
 		        PsiAnnotationMemberValue nullableValue = psiAnnotation.findAttributeValue("nullable");
+		        PsiAnnotationMemberValue columnDefinition = psiAnnotation.findAttributeValue("columnDefinition");
+
+		        String comment = getComment(columnDefinition.getText());
+		        if (StringUtils.isNotBlank(comment)){
+			        annotationStringBuilder.append("@ApiModelProperty(\""+comment+"\")\n ");
+			        this.importClass("io.swagger.annotations.ApiModelProperty;");
+		        }
+
 		        if ("false".equals(nullableValue.getText())){
 			        if ("String".equals(typeName) && !name.equalsIgnoreCase("id")) {
 				        annotationStringBuilder.append("@NotBlank ");
@@ -167,6 +177,16 @@ public class ClassCreator {
 
     private String createGetter(String name, String type) {
         return "public " + type + " get" + name.substring(0, 1).toUpperCase() + name.substring(1) + "() {return this." + name + ";}";
+    }
+
+    private String getComment(String columnDefinition) {
+	    String pattern = "(?<=COMMENT )\\S+$";
+	    Pattern r = Pattern.compile(pattern);
+	    Matcher m = r.matcher(columnDefinition);
+	    if (m.find()){
+		    return m.group(0).replace("'","").replace("\"","");
+	    }
+	    return "";
     }
 
     public static class And {

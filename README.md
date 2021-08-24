@@ -10,17 +10,19 @@ idea插件市场搜索Generate Crud安装
 - DTO
 - Service (with page query)
 - Mapper mapstruct
-- Mockito Junit5 Unit Test
+- Mockito Junit5 Unit Test 
+- Dto generate @ApiModelProperty
 
 生成的DTO如果需要加验证，在@Column注解上定义columnDefinition属性和length属性
 例如： 
 ```
-@Column(length = 100,nullable = false)
+@Column(length = 1, columnDefinition = "bit(1) COMMENT '是否推荐'", nullable = false)
 ```
 DTO将生成如下字段
 ```
 @Size(max = 100)
 @NotBlank
+@ApiModelProperty("你在实体类上定义的columnDefinition.comment注释")
 private String ipAddress;
 ```
 ![image](https://yd-note.oss-cn-beijing.aliyuncs.com/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/DEMO.gif)
