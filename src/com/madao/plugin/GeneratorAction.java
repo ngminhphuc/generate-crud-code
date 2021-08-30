@@ -5,11 +5,10 @@
 
 package com.madao.plugin;
 
-import com.intellij.jpa.frameworks.data.util.parser.domain.Sort;
+import com.intellij.lang.jvm.annotation.JvmAnnotationAttribute;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -18,7 +17,10 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.madao.plugin.classes.*;
+import com.intellij.psi.impl.source.tree.java.PsiNameValuePairImpl;
+import com.madao.plugin.classes.AbstractDTOClass;
+import com.madao.plugin.classes.EntityMapperClass;
+import com.madao.plugin.classes.ServiceImplClass;
 import com.madao.plugin.utils.ContentClass;
 import com.madao.plugin.utils.MyStringUtils;
 import com.madao.plugin.utils.PsiUtils;
@@ -26,13 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
-import java.awt.print.Pageable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class GeneratorAction extends AnAction {
     private static final String TITLE_INFORMATION = "Information";
@@ -146,12 +143,20 @@ public class GeneratorAction extends AnAction {
 
     private void createClasses(EntityClasses entityClasses) {
         String className = entityClasses.getEntityClassName();
-
         assert className != null;
+
+	    PsiAnnotation[] annotations = entityClasses.getEntityClass().getAnnotations();
+	    HashMap<String, List<JvmAnnotationAttribute>> tableAnnotations = getTableAnnotations(annotations);
+	    List<JvmAnnotationAttribute> annotationAttributes = tableAnnotations.get("org.hibernate.annotations.Table");
+	    String text = "";
+	    if (annotationAttributes != null){
+		    text = ((PsiNameValuePairImpl) annotationAttributes.get(1)).getValue().getText();
+	    }
 
         String entityName = className.replace("Entity", "");
         PsiDirectory dtoDirectory = null == this.containerDirectory.getParent() ? this.containerDirectory : this.psiUtils.getOrCreateSubDirectory(this.containerDirectory.getParent(), "dto");
-        String dtoContent = "public class " + entityName + "Dto extends AbstractDto<" + entityClasses.getIdType() + ">";
+	    String dtoContent = "\n" +
+			    "@ApiModel("+text+") \n public class " + entityName + "Dto extends AbstractDto<" + entityClasses.getIdType() + ">";
         ClassCreator.of(this.project).init("AbstractDto", AbstractDTOClass.getCoreString()).addTo(dtoDirectory);
         dtoContent = dtoContent + "{}";
         ClassCreator.of(this.project).init(entityName + "Dto", dtoContent).copyFields(entityClasses.getEntityClass()).addTo(dtoDirectory).and((dtoClass) -> {
@@ -401,6 +406,15 @@ public class GeneratorAction extends AnAction {
 
         return controllerDirectory;
     }
+
+
+	private HashMap<String, List<JvmAnnotationAttribute>> getTableAnnotations(PsiAnnotation[] annotations) {
+		HashMap<String, List<JvmAnnotationAttribute>> annotationMaps = new HashMap<>();
+		for (PsiAnnotation annotation : annotations) {
+			annotationMaps.put(annotation.getQualifiedName(),annotation.getAttributes());
+		}
+		return annotationMaps;
+	}
 
     private void createRepository(EntityClasses entityClasses) {
         String entityName = entityClasses.getEntityName();

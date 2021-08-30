@@ -113,12 +113,6 @@ public class ClassCreator {
 		        PsiAnnotationMemberValue nullableValue = psiAnnotation.findAttributeValue("nullable");
 		        PsiAnnotationMemberValue columnDefinition = psiAnnotation.findAttributeValue("columnDefinition");
 
-		        String comment = getComment(columnDefinition.getText());
-		        if (StringUtils.isNotBlank(comment)){
-			        annotationStringBuilder.append("@ApiModelProperty(\""+comment+"\")\n ");
-			        this.importClass("io.swagger.annotations.ApiModelProperty;");
-		        }
-
 		        if ("false".equals(nullableValue.getText())){
 			        if ("String".equals(typeName) && !name.equalsIgnoreCase("id")) {
 				        annotationStringBuilder.append("@NotBlank ");
@@ -136,7 +130,15 @@ public class ClassCreator {
 				        this.importClass("javax.validation.constraints.NotNull");
 			        }
 		        }
+
+		        String comment = getComment(columnDefinition.getText());
+		        if (StringUtils.isNotBlank(comment)){
+			        annotationStringBuilder.append("@ApiModelProperty(\""+comment+"\")\n ");
+			        this.importClass("io.swagger.annotations.ApiModelProperty;");
+		        }
+
 	        }
+
 
 
 	        PsiField cField = elementFactory.createFieldFromText(annotationStringBuilder.toString() + "private " + typeName + " " + name + ";", (PsiElement)null);
@@ -180,7 +182,7 @@ public class ClassCreator {
     }
 
     private String getComment(String columnDefinition) {
-	    String pattern = "(?<=COMMENT )\\S+$";
+	    String pattern = "(?<=COMMENT )\\S+";
 	    Pattern r = Pattern.compile(pattern);
 	    Matcher m = r.matcher(columnDefinition);
 	    if (m.find()){
