@@ -4,6 +4,8 @@ idea插件市场搜索Generate Crud安装
 # Generate_Crud_Code
 根据实体类生成原始代码
 
+> 技术栈：JPA、Mapstruct、Mockito Junit5、Swagger
+
 在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
 - Controller REST API with Swagger DOC API
 - DAO(JpaRepository)

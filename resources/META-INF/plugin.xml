@@ -51,12 +51,7 @@
 
 </p>]]>
     </description>
-    <![CDATA[
-        <p>
-            <ul><li>3.0.7 Adding junit test</li>
-            <ul><li>3.0.8 DTO.class add check field</li>
-             </p>
-            </p>]]>
+
     <change-notes>
         <![CDATA[
         <p>
@@ -64,6 +59,7 @@
                 <li>3.0.7 Adding junit test</li>
                 <li>3.0.8 DTO.class add check field</li>
                 <li>3.0.9 DTO will be added @ApiModelProperty</li>
+                <li>3.10 Add @Apimodel to the Dto and fix the comment value problem</li>
             </ul>
              </p>
             </p>]]>
