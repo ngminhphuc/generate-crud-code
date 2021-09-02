@@ -30,7 +30,12 @@ private String ipAddress;
 ![image](https://yd-note.oss-cn-beijing.aliyuncs.com/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/DEMO.gif)
 
 # note
-Controller层返回标准Result，生成后自己调整即可
+Controller层返回标准Result，生成后自己调整即可.
+
+- 如果你的实体类字段类型为Date、LocalDate将会自动添加@CheckDate 注解
+- 如果你的实体类字段名称包含 idCard 将会自动添加@CheckIdCard 注解
+- 如果你的实体类字段名称包含 mail 将会自动添加@CheckEmail 注解
+- 如果你的实体类字段名称包含 phone、mobile 将会自动添加@CheckMobile 注解
 
 ## 在项目中使用
 ### pom.xml文件参考配置

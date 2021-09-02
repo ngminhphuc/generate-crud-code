@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>0537</id>
     <name>Generate Crud</name>
-    <version>3.0.9</version>
+    <version>3.11</version>
     <vendor email="guoguang0536@gmail.com" >GuoGuang</vendor>
 
     <description>
@@ -32,6 +32,8 @@
             <li>springfox-boot-starter 3.0.0</li>
             <li>mapstruct 1.4.2.Final</li>
             <li>mapstruct-processor 1.4.2.Final</li>
+            <li>Swagger</li>
+            <li>Hutool</li>
         </ul>
     </p>
 
@@ -46,6 +48,7 @@
             <li>Mapper mapstruct</li>
             <li>单元测试</li>
          </ul>
+
     </p>
 
 
@@ -60,6 +63,7 @@
                 <li>3.0.8 DTO.class add check field</li>
                 <li>3.0.9 DTO will be added @ApiModelProperty</li>
                 <li>3.10 Add @Apimodel to the Dto and fix the comment value problem</li>
+                <li>3.11 Intelligently identify field types and add validator annotations</li>
             </ul>
              </p>
             </p>]]>

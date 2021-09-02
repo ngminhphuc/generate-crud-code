@@ -21,6 +21,7 @@ import com.intellij.psi.impl.source.tree.java.PsiNameValuePairImpl;
 import com.madao.plugin.classes.AbstractDTOClass;
 import com.madao.plugin.classes.EntityMapperClass;
 import com.madao.plugin.classes.ServiceImplClass;
+import com.madao.plugin.utils.AnnotationUtil;
 import com.madao.plugin.utils.ContentClass;
 import com.madao.plugin.utils.MyStringUtils;
 import com.madao.plugin.utils.PsiUtils;
@@ -379,9 +380,33 @@ public class GeneratorAction extends AnAction {
                 .and(entityClasses::setControllerClass);
         WriteCommandAction.runWriteCommandAction(this.testProject, () -> {
             this.createUtilsClass(entityClasses);
+            this.createAnnotation();
             this.createBuilderClass(entityClasses);
         });
 }
+	private void createAnnotation() {
+
+		assert this.containerDirectory.getParent() != null;
+
+		String checkEmail = "CheckEmail";
+		String checkEmailContent = AnnotationUtil.getAnnotationCheckEmail();
+
+		String checkIdCard = "CheckIdCard";
+		String checkIdCardContent = AnnotationUtil.getAnnotationCheckIdCard();
+
+		String checkMobile = "CheckMobile";
+		String checkMobileContent = AnnotationUtil.getAnnotationCheckMobile();
+
+		String checkDate = "CheckDate";
+		String checkDateContent = AnnotationUtil.getAnnotationCheckDate();
+
+		PsiDirectory annotation = this.createDirectory(this.containerDirectory.getParent(), "annotation");
+
+		ClassCreator.of(this.project).init(checkEmail, checkEmailContent).addTo(annotation);
+		ClassCreator.of(this.project).init(checkIdCard, checkIdCardContent).addTo(annotation);
+		ClassCreator.of(this.project).init(checkMobile, checkMobileContent).addTo(annotation);
+		ClassCreator.of(this.project).init(checkDate, checkDateContent).addTo(annotation);
+	}
 
     private void createUtilsClass(EntityClasses entityClasses) {
         String utils = "CustomUtils";

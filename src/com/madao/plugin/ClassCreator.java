@@ -108,20 +108,41 @@ public class ClassCreator {
                 annotationStringBuilder.append("@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)");
             }
 
+	        if (StringUtils.equalsAny(typeName,"Date","LocalDate")) {
+		        annotationStringBuilder.append("@CheckDate ");
+		        this.importClass("CheckDate");
+	        }
+	        if (StringUtils.containsIgnoreCase(name,"idCard")) {
+		        annotationStringBuilder.append("@CheckIdCard ");
+		        this.importClass("CheckIdCard");
+	        }
+	        if (StringUtils.containsIgnoreCase(name,"mail")) {
+		        annotationStringBuilder.append("@CheckEmail ");
+		        this.importClass("CheckEmail");
+	        }
+	        if (StringUtils.containsIgnoreCase(name,"phone") || StringUtils.containsIgnoreCase(name,"mobile")) {
+		        annotationStringBuilder.append("@CheckMobile ");
+		        this.importClass("CheckMobile");
+	        }
+
 	        if (null != psiAnnotation) {
 		        PsiAnnotationMemberValue memberLengthValue = psiAnnotation.findAttributeValue("length");
 		        PsiAnnotationMemberValue nullableValue = psiAnnotation.findAttributeValue("nullable");
 		        PsiAnnotationMemberValue columnDefinition = psiAnnotation.findAttributeValue("columnDefinition");
 
+		        if (null != memberLengthValue && "String".equals(typeName) ) {
+			        int length = Integer.parseInt(memberLengthValue.getText());
+			        annotationStringBuilder.append("@Size(max = ").append(length).append(") ");
+			        this.importClass("javax.validation.constraints.Size");
+		        }else if("Integer".equals(typeName) ) {
+			        annotationStringBuilder.append("@Max(Integer.MAX_VALUE) ");
+			        this.importClass("javax.validation.constraints.Size");
+		        }
+
 		        if ("false".equals(nullableValue.getText())){
 			        if ("String".equals(typeName) && !name.equalsIgnoreCase("id")) {
 				        annotationStringBuilder.append("@NotBlank ");
 				        this.importClass("javax.validation.constraints.NotBlank");
-				        if (null != memberLengthValue) {
-					        int length = Integer.parseInt(memberLengthValue.getText());
-					        annotationStringBuilder.append("@Size(max = ").append(length).append(") ");
-					        this.importClass("javax.validation.constraints.Size");
-				        }
 			        }else if(StringUtils.containsAny(typeName,"List","Map","Set") ){
 				        annotationStringBuilder.append("@NotEmpty ");
 				        this.importClass("javax.validation.constraints.NotEmpty");
@@ -136,10 +157,7 @@ public class ClassCreator {
 			        annotationStringBuilder.append("@ApiModelProperty(\""+comment+"\")\n ");
 			        this.importClass("io.swagger.annotations.ApiModelProperty;");
 		        }
-
 	        }
-
-
 
 	        PsiField cField = elementFactory.createFieldFromText(annotationStringBuilder.toString() + "private " + typeName + " " + name + ";", (PsiElement)null);
             aClass.add(cField);
@@ -157,7 +175,7 @@ public class ClassCreator {
         return this;
     }
 
-    private PsiMethod getConstructeurWithParam(PsiElementFactory psiElementFactory, PsiClass aClass, PsiField[] fields) {
+	private PsiMethod getConstructeurWithParam(PsiElementFactory psiElementFactory, PsiClass aClass, PsiField[] fields) {
         PsiMethod constructor = psiElementFactory.createConstructor(aClass.getQualifiedName());
         constructor.getModifierList().setModifierProperty("public", true);
         Stream.of(fields).forEach((psiField) -> {
