@@ -108,7 +108,8 @@ public class ClassCreator {
                 annotationStringBuilder.append("@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)");
             }
 
-	        if (StringUtils.equalsAny(typeName,"Date","LocalDate")) {
+            // StringUtils.equals compatible idea 193 version
+	        if (StringUtils.equals(typeName,"Date") || StringUtils.equals(typeName,"LocalDate")) {
 		        annotationStringBuilder.append("@CheckDate ");
 		        this.importClass("CheckDate");
 	        }
