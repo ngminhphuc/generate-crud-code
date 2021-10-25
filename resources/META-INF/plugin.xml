@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>0537</id>
     <name>Generate Crud</name>
-    <version>3.11</version>
+    <version>3.12</version>
     <vendor email="guoguang0536@gmail.com" >GuoGuang</vendor>
 
     <description>
