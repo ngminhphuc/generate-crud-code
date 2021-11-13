@@ -7,6 +7,14 @@ package com.madao.plugin.utils;
 
 import com.madao.plugin.EntityClasses;
 
+/**
+ * 单元测试
+ * @author GuoGuang
+ * @公众号 码道人生
+ * @gitHub https://github.com/GuoGuang
+ * @website https://madaoo.com
+ * @created 2021-11-13 02:37
+ */
 public class ContentClass {
 	public ContentClass() {
 	}

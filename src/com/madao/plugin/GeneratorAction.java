@@ -32,6 +32,14 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * 生成代码
+ * @author GuoGuang
+ * @公众号 码道人生
+ * @gitHub https://github.com/GuoGuang
+ * @website https://madaoo.com
+ * @created 2021-11-13 02:37
+ */
 public class GeneratorAction extends AnAction {
     private static final String TITLE_INFORMATION = "Information";
     private static final String TITLE = "Madaoo Demo";

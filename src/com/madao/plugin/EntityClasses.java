@@ -14,6 +14,14 @@ import com.madao.plugin.utils.PsiUtils;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * IDEA实体类
+ * @author GuoGuang
+ * @公众号 码道人生
+ * @gitHub https://github.com/GuoGuang
+ * @website https://madaoo.com
+ * @created 2021-11-13 02:37
+ */
 public class EntityClasses {
     private String FieldIdMaj;
     private PsiClass entityClass;

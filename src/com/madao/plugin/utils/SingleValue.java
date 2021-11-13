@@ -5,6 +5,13 @@
 
 package com.madao.plugin.utils;
 
+/**
+ * @author GuoGuang
+ * @公众号 码道人生
+ * @gitHub https://github.com/GuoGuang
+ * @website https://madaoo.com
+ * @created 2021-11-13 02:37
+ */
 public class SingleValue<T> {
     private T value;
 

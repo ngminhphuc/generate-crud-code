@@ -1,6 +1,10 @@
 # 安装插件
 idea插件市场搜索Generate Crud安装
 
+> 开源不易，如果此项目帮到了你,还请不忘star哦🌟,你的关注是我的动力
+
+更多内容请关注公众号：`码道人生`
+
 # Generate_Crud_Code
 根据实体类生成原始代码
 
@@ -29,7 +33,7 @@ private String ipAddress;
 ```
 ![image](https://yd-note.oss-cn-beijing.aliyuncs.com/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/DEMO.gif)
 
-# note
+# 校验
 Controller层返回标准Result，生成后自己调整即可.
 
 - 如果你的实体类字段类型为Date、LocalDate将会自动添加@CheckDate 注解
@@ -46,7 +50,6 @@ Controller层返回标准Result，生成后自己调整即可.
     <artifactId>mapstruct</artifactId>
     <version>1.4.2.Final</version>
 </dependency>
-
 <!-- 这一块主要是找到生成的类文件 -->
  <build>
         <plugins>
@@ -67,46 +70,28 @@ Controller层返回标准Result，生成后自己调整即可.
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>1.1.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/generated-sources/java</outputDirectory>
+                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
     </build>
 ```
-生成文件后需要标记生成的文件为代码(src/generated-sources/java目录标记为Generated Sources Root)
-![generated-sources标记为源码.png](https://vue-admin-guoguang.oss-cn-shanghai.aliyuncs.com/generated-sources%E6%A0%87%E8%AE%B0%E4%B8%BA%E6%BA%90%E7%A0%81.png)
-
-# 感谢
-👤 **GuoGuang**
-
-如果此项目帮到了你,还请不忘star哦🌟,你的关注是我的动力
+## 开发中
+- 完善基于实体类生成的Dto校验
+- 多数据源配置
 
 # License
 [Apache-2.0](https://opensource.org/licenses/Apache-2.0)

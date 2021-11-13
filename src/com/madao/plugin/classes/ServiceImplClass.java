@@ -8,6 +8,14 @@ package com.madao.plugin.classes;
 import com.madao.plugin.EntityClasses;
 import com.madao.plugin.utils.MyStringUtils;
 
+/**
+ * service
+ * @author GuoGuang
+ * @公众号 码道人生
+ * @gitHub https://github.com/GuoGuang
+ * @website https://madaoo.com
+ * @created 2021-11-13 02:37
+ */
 public class ServiceImplClass {
     public ServiceImplClass() {
     }

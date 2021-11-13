@@ -1,5 +1,13 @@
 package com.madao.plugin.utils;
 
+/**
+ * 注解工具类
+ * @author GuoGuang
+ * @公众号 码道人生
+ * @gitHub https://github.com/GuoGuang
+ * @website https://madaoo.com
+ * @created 2021-11-13 02:37
+ */
 public class AnnotationUtil {
 
 	public static String getAnnotationCheckIdCard() {
