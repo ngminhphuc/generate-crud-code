@@ -53,11 +53,6 @@ public class GeneratorAction extends AnAction {
     private Project testProject;
     private PsiDirectory controllerTestDirectory;
 
-
-    public static void main(String[] args) {
-        System.out.println("test\"".replace("\"", ""));
-    }
-
     public GeneratorAction() {
     }
 
@@ -78,7 +73,7 @@ public class GeneratorAction extends AnAction {
             return;
         }
         PsiClass aClass = classes[0];
-        if (null == aClass.getAnnotation("javax.persistence.Entity")) {
+        if (null == aClass.getAnnotation("javax.persistence.Entity") && null == aClass.getAnnotation("jakarta.persistence.Entity")) {
             Messages.showMessageDialog(this.project, "this class is not an entity", "Information", Messages.getInformationIcon());
             return;
         }
@@ -230,6 +225,7 @@ public class GeneratorAction extends AnAction {
                 .importClass("java.util.List").importClass("PageHelper")
                 .importClass("AbstractBaseEntityService")
                 .importClass("com.github.pagehelper.PageInfo")
+		        .importClass("org.springframework.beans.BeanUtils")
                 .importClass("org.mapstruct.factory.Mappers")
                 .importClass("org.springframework.data.domain.Pageable")
                 .importClass("org.springframework.data.domain.Page")
@@ -347,8 +343,12 @@ public class GeneratorAction extends AnAction {
                 .append(entityClasses.getDtoClass().getName() + " " + entityFieldName + " = " + entityFieldName + "Service.findById(id);")
                 .append("return ResponseEntity.ok(" + entityFieldName + ");}")
                 .append("@DeleteMapping(\"/{id}\") public ResponseEntity<Void> delete(@PathVariable(\"id\") ")
-                .append(entityClasses.getIdField().getType().getPresentableText() + " id) {").append(entityFieldName)
-                .append("Service.deleteById(id);")
+                .append(entityClasses.getIdField().getType().getPresentableText() + " id) {")
+		        .append("Optional.ofNullable("+entityFieldName+"Service.findById(id)).orElseThrow(() -> {\n" +
+				        "\t\t\tlog.error(\"Unable to delete non-existent data！\");\n" +
+				        "\t\t\treturn new ResourceNotFoundException();\n" +
+				        "\t\t});")
+		        .append(entityFieldName).append("Service.deleteById(id);")
                 .append("return ResponseEntity.ok().build();\n}")
                 .append("@GetMapping(\"/page-query\") public ResponseEntity<Page<")
                 .append(entityClasses.getDtoClass().getName())
