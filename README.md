@@ -92,6 +92,7 @@ Controller层返回标准Result，生成后自己调整即可.
 ## 开发中
 - 完善基于实体类生成的Dto校验
 - 多数据源配置
+- WebFlux & WebFlux unit test
 
 # License
 [Apache-2.0](https://opensource.org/licenses/Apache-2.0)
