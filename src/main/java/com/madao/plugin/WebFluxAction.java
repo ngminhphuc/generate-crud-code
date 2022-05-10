@@ -6,7 +6,6 @@
 package com.madao.plugin;
 
 import com.intellij.lang.jvm.annotation.JvmAnnotationAttribute;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -21,10 +20,7 @@ import com.intellij.psi.impl.source.tree.java.PsiNameValuePairImpl;
 import com.madao.plugin.classes.AbstractDTOClass;
 import com.madao.plugin.classes.EntityMapperClass;
 import com.madao.plugin.classes.ServiceImplClass;
-import com.madao.plugin.utils.AnnotationUtil;
-import com.madao.plugin.utils.ContentClass;
-import com.madao.plugin.utils.MyStringUtils;
-import com.madao.plugin.utils.PsiUtils;
+import com.madao.plugin.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
@@ -40,7 +36,7 @@ import java.util.function.Consumer;
  * @website https://madaoo.com
  * @created 2021-11-13 02:37
  */
-public class GeneratorAction extends AnAction {
+public class WebFluxAction extends DefaultAction {
     private static final String TITLE_INFORMATION = "Information";
     private static final String TITLE = "Madaoo Demo";
     private Project project;
@@ -53,10 +49,9 @@ public class GeneratorAction extends AnAction {
     private Project testProject;
     private PsiDirectory controllerTestDirectory;
 
-    public GeneratorAction() {
+    public WebFluxAction() {
     }
 
-    @Override
     public synchronized void actionPerformed(@NotNull AnActionEvent anActionEvent) {
 
         this.project = anActionEvent.getProject();
@@ -77,6 +72,7 @@ public class GeneratorAction extends AnAction {
             Messages.showMessageDialog(this.project, "this class is not an entity", "Information", Messages.getInformationIcon());
             return;
         }
+
         this.containerDirectory = javaFile.getContainingDirectory();
         this.module = FileIndexFacade.getInstance(this.project).getModuleForFile(psiFile.getVirtualFile());
         EntityClasses entityClasses = (new EntityClasses()).setServiceDirectory(createServiceDirectory()).setEntityClass(aClass);
@@ -329,36 +325,53 @@ public class GeneratorAction extends AnAction {
         entityClasses.setEntityFieldName(entityFieldName);
         StringBuilder var19 = content.append("{");
         String var10001 = entityClasses.getServiceClass().getName();
-        var19 = var19.append("private final " + var10001 + " " + entityFieldName + "Service; ");
-        var19.append("public " + entityName + suffix + "(" + entityClasses.getServiceClass().getName() + " " + entityFieldName + "Service){")
+        var19.append("private final " + var10001 + " " + entityFieldName + "Service; ")
+				        .append("private final AsyncUtil asyncUtil;");
+        var19.append("public " + entityName + suffix + "(" + entityClasses.getServiceClass().getName() + " " + entityFieldName + "Service ,AsyncUtil asyncUtil){")
                 .append("this." + entityFieldName + "Service = " + entityFieldName + "Service;")
+                .append("this.asyncUtil = asyncUtil;")
                 .append("}")
                 .append("@PostMapping ")
-                .append("public ResponseEntity<Void> save(@RequestBody @Validated ")
+                .append("public  Mono<ResponseEntity<Void>> save(@RequestBody @Validated ")
                 .append(entityClasses.getDtoClass().getName()).append(" ").append(entityFieldName + "Dto").append(") { ")
-                .append(entityFieldName + "Service.save(" + entityFieldName + "Dto);\n")
-                .append("return ResponseEntity.ok().build(); }")
-                .append("@GetMapping(\"/{id}\") public ResponseEntity<" + entityClasses.getDtoClass().getName() + "> findById(@PathVariable(\"id\") ")
+		        .append("return asyncUtil.asyncMono(() -> {")
+		        .append(entityFieldName + "Service.save(" + entityFieldName + "Dto);\n")
+                .append("return ResponseEntity.ok().build(); ")
+		        .append(" });")
+		        .append("}")
+                .append("@GetMapping(\"/{id}\") public  Mono<ResponseEntity<" + entityClasses.getDtoClass().getName() + ">> findById(@PathVariable(\"id\") ")
                 .append(entityClasses.getIdField().getType().getPresentableText() + " id) {")
+		        .append("return asyncUtil.asyncMono(() -> {")
                 .append(entityClasses.getDtoClass().getName() + " " + entityFieldName + " = " + entityFieldName + "Service.findById(id);")
-                .append("return ResponseEntity.ok(" + entityFieldName + ");}")
-                .append("@DeleteMapping(\"/{id}\") public ResponseEntity<Void> delete(@PathVariable(\"id\") ")
+                .append("return ResponseEntity.ok(" + entityFieldName + ");")
+		        .append(" });")
+		        .append("}")
+                .append("@DeleteMapping(\"/{id}\") public  Mono<ResponseEntity<Void>> delete(@PathVariable(\"id\") ")
                 .append(entityClasses.getIdField().getType().getPresentableText() + " id) {")
+		        .append("return asyncUtil.asyncMono(() -> {")
 		        .append("Optional.ofNullable("+entityFieldName+"Service.findById(id)).orElseThrow(() -> {\n" +
 				        "\t\t\tlog.error(\"Unable to delete non-existent data！\");\n" +
 				        "\t\t\treturn new ResourceNotFoundException();\n" +
 				        "\t\t});")
 		        .append(entityFieldName).append("Service.deleteById(id);")
-                .append("return ResponseEntity.ok().build();\n}")
-                .append("@GetMapping(\"/page-query\") public ResponseEntity<Page<")
-                .append(entityClasses.getDtoClass().getName())
-                .append(">> pageQuery("+entityClasses.getDtoClass().getName() + " "+entityFieldName+"Dto, @PageableDefault(sort = \"createAt\", direction = Sort.Direction.DESC) Pageable pageable) {  ")
-                .append("Page<" + entityClasses.getDtoClass().getName() + "> " + entityFieldName + "Page = " + entityFieldName + "Service.findByCondition(" + entityFieldName + "Dto,pageable);")
-                .append("return ResponseEntity.ok("+ entityFieldName + "Page) ;}")
-                .append("@PutMapping(\"/{id}\") public ResponseEntity<Void>")
+                .append("return ResponseEntity.ok().build();\n")
+		        .append(" });")
+		        .append("}")
+                .append("@GetMapping(\"/page-query\") public  Mono<ResponseEntity<Page<")
+		        .append(entityClasses.getDtoClass().getName())
+                .append(">>> pageQuery("+entityClasses.getDtoClass().getName() + " "+entityFieldName+"Dto, @PageableDefault(sort = \"createAt\", direction = Sort.Direction.DESC) Pageable pageable) {  ")
+		        .append("return asyncUtil.asyncMono(() -> {")
+		        .append("Page<" + entityClasses.getDtoClass().getName() + "> " + entityFieldName + "Page = " + entityFieldName + "Service.findByCondition(" + entityFieldName + "Dto,pageable);")
+                .append("return ResponseEntity.ok("+ entityFieldName + "Page) ;")
+		        .append(" });")
+		        .append("}")
+                .append("@PutMapping(\"/{id}\") public  Mono<ResponseEntity<Void>>")
                 .append(" update(@RequestBody @Validated " + entityClasses.getDtoClass().getName() + " " + entityFieldName + "Dto, @PathVariable(\"id\") " + entityClasses.getIdField().getType().getPresentableText() + " id) { ")
-                .append(entityFieldName + "Service.update(" + entityFieldName + "Dto, id);\n")
-                .append("return ResponseEntity.ok().build();}")
+                .append("return asyncUtil.asyncMono(() -> {")
+		        .append(entityFieldName + "Service.update(" + entityFieldName + "Dto, id);\n")
+                .append("return ResponseEntity.ok().build();")
+		        .append(" });")
+		        .append("}")
                 .append("}");
         ClassCreator.of(this.project).init(entityClasses.getEntityName() + suffix, content.toString())
                 .importClass("org.springframework.data.web.PageableDefault")
@@ -377,6 +390,7 @@ public class GeneratorAction extends AnAction {
                 .importClass("java.util.List")
                 .importClass("org.springframework.http.ResponseEntity")
                 .importClass("java.util.stream.Collectors")
+                .importClass("reactor.core.publisher.Mono")
                 .importClass("org.springframework.validation.annotation.Validated")
 			    .importClass("org.springframework.data.domain.Sort")
                 .importClass(entityClasses.getControllerClass())
@@ -389,6 +403,7 @@ public class GeneratorAction extends AnAction {
         WriteCommandAction.runWriteCommandAction(this.testProject, () -> {
             this.createUtilsClass(entityClasses);
             this.createAnnotation();
+	        ClassCreator.of(this.project).init("AsyncUtil", AsyncUtil.getAsyncUtil()).addTo(this.createDirectory(this.containerDirectory.getParent(), "util"));
             this.createBuilderClass(entityClasses);
         });
 }
@@ -457,10 +472,10 @@ public class GeneratorAction extends AnAction {
         PsiDirectory repositoryDirectory = null == this.containerDirectory.getParent() ? this.containerDirectory : this.psiUtils.getOrCreateSubDirectory(this.containerDirectory.getParent(), "repository");
         String repositoryName = entityName.replace("Entity", "").concat("Repository");
         ClassCreator.of(this.project).init(repositoryName, "@Repository public interface "
-		        + repositoryName + " extends JpaRepository<" + entityClasses.getEntityClassName() + ", " + entityClasses.getIdType() + ">"
+		        + repositoryName + " extends MongoRepository<" + entityClasses.getEntityClassName() + ", " + entityClasses.getIdType() + ">"
 		        + ", JpaSpecificationExecutor<" + entityClasses.getEntityClassName() +">{}")
 		        .importClass(entityClasses.getEntityClass())
-		        .importClass("org.springframework.data.jpa.repository.JpaRepository")
+		        .importClass("org.springframework.data.mongodb.repository.MongoRepository")
 		        .importClass("org.springframework.data.jpa.repository.JpaSpecificationExecutor")
 		        .importClass("org.springframework.stereotype.Repository")
 		        .addTo(repositoryDirectory)
