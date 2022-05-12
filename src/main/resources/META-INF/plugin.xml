@@ -10,8 +10,8 @@
     <p>
         Please right-click to generate the class defined with the Entity annotation,
          and the following module will be generated :
-        <ul><li>Controller REST API with Swagger DOC API</li>
-        <li>DAO(JpaRepository)</li>
+        <ul><li>Controller or WebFlux REST API with Swagger DOC API</li>
+        <li>DAO(JpaRepository or MongoRepository)</li>
         <li>DTO and generate @ApiModelProperty</li>
         <li>Service (with page query)</li>
         <li>Mapper mapstruct</li>
@@ -42,7 +42,7 @@
         根据实体类生成原始代码（WebFlux and MongoDB or WebMvc and JPA）
         在带有@Entity注解的实体类上右键单击"Generator CRUD"，然后将生成以下模块:
          <ul>
-            <li>Controller REST API with Swagger DOC API</li>
+            <li>带有 Swagger DOC API 的SpringMvc Controller 或者 WebFlux Controller 的REST API</li>
             <li>DAO(字段校验)</li>
             <li>DTO字段带@ApiModelProperty</li>
             <li>Service (分页)</li>
